@@ -1,0 +1,16 @@
+[user]
+	name = mecab
+	email = mecab@misosi.ru
+
+[color]
+	ui = auto
+
+[alias]
+	lg = log --graph --date=iso --pretty=format:'%Cgreen%cd %Cblue%cn %Cred%h\n  %Creset%s'
+	ll = log --graph --date=iso --stat --pretty=format:'%Cgreen%cd %Cblue%cn %Cred%h\n  %Creset%s'
+	co = checkout
+	st = status
+	ci = commit -a
+	di = diff
+	br = branch
+
