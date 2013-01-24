@@ -130,9 +130,9 @@ prompt_1="${LGREEN}[%n@%m${RESET} ${WHITE}%1~${LGREEN}] ${RESET}${WHITE} %(1j,(%
 ###     %j: 実行中のジョブ数。
 ###   %{%B%}...%{%b%}: 「...」を太字にする。
 ###   %#: 一般ユーザなら「%」、rootユーザなら「#」になる。
-prompt_2="[%h]%{%B%}%(!.★.☆)%{%b%} "
+prompt_2="[%h]%{%B%}%(!.♪.♪)%{%b%"
 PROMPT='${prompt_1}
-${prompt_2}'
+${prompt_2} '
 
 # 補完
 ## 初期化
@@ -263,17 +263,6 @@ alias df="df -h"
 alias su="su -l"
 
 
-## Emacsのショートカット。
-### 2011-11-06
-alias e="emacs &"
-### -nw: ターミナル内でEmacsを起動する。
-### 2011-11-06
-alias enw="emacs -nw"
-
-## exitのショートカット。
-### 2011-11-06
-alias x="exit"
-
 ## カスタムaliasの設定
 ### ~/.zsh.d/zshalias → ~/.zshaliasの順に探して
 ### 最初に見つかったファイルを読み込む。
@@ -377,3 +366,13 @@ if which tmux 2>&1 >/dev/null; then
     #if not inside a tmux session, and if no session is started, start a new session
     test -z "$TMUX" && (tmux attach || tmux new-session)
 fi
+
+### Start emacs as a daemon if it is not started.
+if ! pgrep emacs >/dev/null 2>&1; then
+    `\emacs --daemon`
+fi
+
+alias emacs="emacsclient -c"
+alias e='emacs'
+alias kille="emacsclient -e '(kill-emacs)'"
+###
