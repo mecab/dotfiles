@@ -7,7 +7,8 @@
 (auto-install-compatibility-setup)
 
 (require 'anything-startup)
-
+(require 'uniquify)
+(setq uniquify-buffer-name-style 'post-forward-angle-brackets)
 
 (defun my-move-beginning-of-line ()
   (interactive)
