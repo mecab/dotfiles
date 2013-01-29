@@ -10,6 +10,14 @@
 (require 'uniquify)
 (setq uniquify-buffer-name-style 'post-forward-angle-brackets)
 
+(require 'auto-complete-config)
+(add-to-list 'ac-dictionary-directories "~/.emacs.d/elisp/ac-dict")
+(ac-config-default)
+(define-key ac-mode-map (kbd "M-TAB") 'auto-complete)
+
+(require 'ac-python)
+(add-to-list 'ac-modes 'python-2-mode)
+
 (defun my-move-beginning-of-line ()
   (interactive)
   (if (bolp)
