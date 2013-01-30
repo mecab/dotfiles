@@ -130,7 +130,7 @@ prompt_1="${LGREEN}[%n@%m${RESET} ${WHITE}%1~${LGREEN}] ${RESET}${WHITE} %(1j,(%
 ###     %j: 実行中のジョブ数。
 ###   %{%B%}...%{%b%}: 「...」を太字にする。
 ###   %#: 一般ユーザなら「%」、rootユーザなら「#」になる。
-prompt_2="[%h]%{%B%}%(!.♪.♪)%{%b%"
+prompt_2="[%h]%{%B%}%(!.♪ .♪ )%{%b%"
 PROMPT='${prompt_1}
 ${prompt_2} '
 
