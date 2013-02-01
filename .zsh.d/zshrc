@@ -252,7 +252,15 @@ alias mv="mv -i"
 alias pd="pushd"
 alias po="popd"
 
-alias ls="ls --color"
+case $(uname) in
+    *BSD|Darwin)
+	alias ls="ls -G"
+	;;
+    *)
+        alias ls="ls --color"
+	;;
+esac
+
 alias la="ls -a"
 alias lf="ls -F"
 alias ll="ls -all"
@@ -352,7 +360,14 @@ RPROMPT='`rprompt-git-current-branch`'
 #####
 
 # ~/.tmux_defrost.sh &
-source /usr/local/bin/virtualenvwrapper.sh
+case $(uname) in
+    *BSD|Darwin)
+	source /usr/local/share/python/virtualenvwrapper.sh
+	;;
+    *)
+        source /usr/local/bin/virtualenvwrapper.sh
+	;;
+esac
 
 alias -s py=python
 
@@ -372,7 +387,9 @@ if ! pgrep emacs >/dev/null 2>&1; then
     `\emacs --daemon`
 fi
 
-alias emacs="emacsclient -c"
+alias emacs="emacsclient -cnw"
 alias e='emacs'
 alias kille="emacsclient -e '(kill-emacs)'"
 ###
+
+git config --global core.excludesfile $HOME/.gitignore

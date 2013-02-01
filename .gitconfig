@@ -1,8 +1,8 @@
 [core]
-	excludesfile = /home/mecab/.gitignore
 	pager = less -R
 	autocrlf = input
 	whitespace = cr-at-eol
+	excludesfile = /Users/mecab/.gitignore
 
 [user]
 	name = mecab
