@@ -122,7 +122,7 @@ WHITE="%{$fg[white]%}"
 LWHITE="%{$fg_bold[white]%}"
 
 # prompt_1="${LGREEN}%n@%m [%~]${RESET} %(1j,(%j,)"
-prompt_1="${LGREEN}[%n@%m${RESET} ${WHITE}%1~${LGREEN}] ${RESET}${WHITE} %(1j,(%j,)${RESET}"
+prompt_1="${LGREEN}[%n@%m${RESET} ${WHITE}%~${LGREEN}] ${RESET}${WHITE} %(1j,(%j,)${RESET}"
 
 ### 2行目左にでるプロンプト。
 ###   %h: ヒストリ数。
