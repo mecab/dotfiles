@@ -18,6 +18,8 @@
 (require 'ac-python)
 (add-to-list 'ac-modes 'python-2-mode)
 
+(global-linum-mode)
+
 (defun my-move-beginning-of-line ()
   (interactive)
   (if (bolp)
