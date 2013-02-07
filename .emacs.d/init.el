@@ -18,7 +18,10 @@
 (require 'ac-python)
 (add-to-list 'ac-modes 'python-2-mode)
 
-(global-linum-mode)
+(require 'linum)
+(setq linum-format
+      (lambda (line) (propertize (format (let ((w (length (number-to-string (count-lines (point-min) (point-max)))))) (concat "%" (number-to-string w) "d ")) line) 'face 'linum)))
+(global-linum-mode t)
 
 (defun my-move-beginning-of-line ()
   (interactive)
