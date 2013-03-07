@@ -23,6 +23,10 @@
       (lambda (line) (propertize (format (let ((w (length (number-to-string (count-lines (point-min) (point-max)))))) (concat "%" (number-to-string w) "d ")) line) 'face 'linum)))
 (global-linum-mode t)
 
+(require 'js2-mode)
+(add-to-list 'auto-mode-alist '("\\.js$" . js2-mode))
+(add-hook 'js-mode-hook 'js2-minor-mode)
+
 (defun my-move-beginning-of-line ()
   (interactive)
   (if (bolp)
@@ -87,3 +91,18 @@
                (throw 'end-flag t)))))))
 
 (global-set-key "\C-c\C-r" 'window-resizer)
+(custom-set-variables
+  ;; custom-set-variables was added by Custom.
+  ;; If you edit it by hand, you could mess it up, so be careful.
+  ;; Your init file should contain only one such instance.
+  ;; If there is more than one, they won't work right.
+ '(js2-auto-indent-p t)
+ '(js2-enter-indents-newline t)
+ '(js2-idle-timer-delay 0.1)
+ '(js2-indent-on-enter-key t))
+(custom-set-faces
+  ;; custom-set-faces was added by Custom.
+  ;; If you edit it by hand, you could mess it up, so be careful.
+  ;; Your init file should contain only one such instance.
+  ;; If there is more than one, they won't work right.
+ )
