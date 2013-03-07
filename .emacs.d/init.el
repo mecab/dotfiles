@@ -23,6 +23,9 @@
       (lambda (line) (propertize (format (let ((w (length (number-to-string (count-lines (point-min) (point-max)))))) (concat "%" (number-to-string w) "d ")) line) 'face 'linum)))
 (global-linum-mode t)
 
+(load-library "php-mode-improved")
+(require 'php-mode)
+
 (defun my-move-beginning-of-line ()
   (interactive)
   (if (bolp)

@@ -12,6 +12,7 @@ typeset -U path
 path=(# システム用
       /bin(N-/)
       # 自分用（--prefix=$HOME/localでインストールしたもの）
+      $HOME/bin(N-/)
       $HOME/local/bin(N-/)
       # 自分用（gem install --user-installでインストールしたもの）
       ## 2012-01-07
