@@ -1,10 +1,26 @@
-(add-to-list 'load-path "~/.emacs.d/elisp")
+; add ~/.emacs.d/elisp to load-path recursively
+(let ((default-directory (expand-file-name "~/.emacs.d/elisp")))
+  (add-to-list 'load-path default-directory)
+   (if (fboundp 'normal-top-level-add-subdirs-to-load-path)
+       (normal-top-level-add-subdirs-to-load-path)))
+
 (add-to-list 'load-path "~/.emacs.d/auto-install/")
 
+;;; auto-install
 (require 'auto-install)
 (setq auto-install-directory "~/.emacs.d/auto-install/")
 (auto-install-update-emacswiki-package-name t)
 (auto-install-compatibility-setup)
+
+;;; el-get
+(add-to-list 'load-path "~/.emacs.d/el-get/el-get")
+(unless (require 'el-get nil 'noerror)
+  (with-current-buffer
+      (url-retrieve-synchronously
+       "https://raw.github.com/dimitri/el-get/master/el-get-install.el")
+    (goto-char (point-max))
+    (eval-print-last-sexp)))
+(el-get 'sync)
 
 (require 'anything-startup)
 (require 'uniquify)
@@ -15,8 +31,11 @@
 (ac-config-default)
 (define-key ac-mode-map (kbd "M-TAB") 'auto-complete)
 
-(require 'ac-python)
-(add-to-list 'ac-modes 'python-2-mode)
+;(require 'ac-python)
+;(add-to-list 'ac-modes 'python-2-mode)
+
+(add-hook 'python-mode-hook 'jedi:setup)
+(setq jedi:setup-keys t)
 
 (require 'linum)
 (setq linum-format
