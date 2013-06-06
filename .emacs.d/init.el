@@ -6,6 +6,18 @@
 (auto-install-update-emacswiki-package-name t)
 (auto-install-compatibility-setup)
 
+(add-to-list 'load-path "~/.emacs.d/el-get/el-get")
+
+(unless (require 'el-get nil 'noerror)
+  (with-current-buffer
+      (url-retrieve-synchronously
+       "https://raw.github.com/dimitri/el-get/master/el-get-install.el")
+    (let (el-get-master-branch)
+      (goto-char (point-max))
+      (eval-print-last-sexp))))
+
+(el-get 'sync)
+
 (require 'anything-startup)
 (require 'uniquify)
 (setq uniquify-buffer-name-style 'post-forward-angle-brackets)
@@ -15,17 +27,20 @@
 (ac-config-default)
 (define-key ac-mode-map (kbd "M-TAB") 'auto-complete)
 
-(require 'ac-python)
-(add-to-list 'ac-modes 'python-2-mode)
+(add-hook 'python-mode-hook 'jedi:setup)
+(setq jedi:complete-on-dot t)
+(setq jedi:get-in-function-call-delay 100)
 
 (require 'linum)
 (setq linum-format
       (lambda (line) (propertize (format (let ((w (length (number-to-string (count-lines (point-min) (point-max)))))) (concat "%" (number-to-string w) "d ")) line) 'face 'linum)))
 (global-linum-mode t)
 
-(load-library "php-mode-improved")
-(require 'php-mode)
-(require 'js2-mode)
+(autoload 'php-mode "php-mode-improved" "Major mode for editing php code." t)
+(add-to-list 'auto-mode-alist '("\\.php$" . php-mode))
+(add-to-list 'auto-mode-alist '("\\.inc$" . php-mode))
+
+(autoload 'js2-mode "js2-mode" nil t)
 (add-to-list 'auto-mode-alist '("\\.js$" . js2-mode))
 (add-hook 'js-mode-hook 'js2-minor-mode)
 
