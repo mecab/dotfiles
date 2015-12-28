@@ -9,11 +9,13 @@ typeset -U path
 ##               globがマッチしなかったり存在しないパスを無視する。
 ##            -: シンボリックリンク先のパスを評価。
 ##            /: ディレクトリのみ残す。
-path=(# システム用
-      /bin(N-/)
-      # 自分用（--prefix=$HOME/localでインストールしたもの）
+path=(# 自分用（--prefix=$HOME/localでインストールしたもの）
       $HOME/bin(N-/)
       $HOME/local/bin(N-/)
+      /usr/local/bin(N-/)
+      /usr/bin(N-/)
+      # システム用
+      /bin(N-/)
       # 自分用（gem install --user-installでインストールしたもの）
       ## 2012-01-07
       $HOME/.gem/ruby/*/bin(N-/)
@@ -30,9 +32,6 @@ path=(# システム用
       /usr/ccs/bin(N-/)
       # Cygwin用
       /cygdrive/c/meadow/bin(N-/)
-      # システム用
-      /usr/local/bin(N-/)
-      /usr/bin(N-/)
       /usr/games(N-/))
 
 # sudo時のパスの設定
