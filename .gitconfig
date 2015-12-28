@@ -14,6 +14,7 @@
 [alias]
 	lg = log --graph --date=iso --pretty=format:'%Cgreen%cd %Cblue%cn %Cred%h\n  %Creset%s'
 	ll = log --graph --date=iso --stat --pretty=format:'%Cgreen%cd %Cblue%cn %Cred%h\n  %Creset%s'
+        la = log --oneline --decorate --graph --branches --tags --remotes
 	co = checkout
 	st = status
 	ci = commit -a
@@ -21,4 +22,5 @@
 	br = branch
 
 [push]
-	default = current
+	default = simple
+        
