@@ -1,0 +1,38 @@
+#!/bin/bash
+
+function safe_lns () {
+    # Create symlink to $1 on $2 (or as $2, if $2 is not a directory).
+    # Backup the file/symlink if the target is exist before the operation.
+    if [ -d $2 ]; then
+        target=$2/$1
+    else
+        target=$2
+    fi
+
+    if [ -f $target -o -s $target -o -d $target ]; then
+        echo "backup: $target > $target.bak"
+
+        # Avoid backing-up the $target "into" the target of the symlink $target.bak
+        if [ -s $target.bak ]; then
+           rm -rf $target.bak
+        fi
+
+        mv $target $target.bak
+    fi
+
+    echo "link: `pwd`/$1 -> $target"
+    ln -sf `pwd`/$1 $target
+}
+export -f safe_lns # hack to use in xargs
+
+if [ -z $1 ]; then
+    dest=~
+else
+    dest=$1
+fi
+
+find . -maxdepth 1 -type f -o -type d \
+    | cut -c3- \
+    | grep "^\..*" \
+    | grep -v "^\.git$" \
+    | xargs -I{} bash -c "safe_lns \"{}\" $dest"
