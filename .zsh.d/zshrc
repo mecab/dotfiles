@@ -370,10 +370,14 @@ RPROMPT='`rprompt-git-current-branch`'
 # ~/.tmux_defrost.sh &
 case $(uname) in
     *BSD|Darwin)
-	source /usr/local/share/python/virtualenvwrapper.sh
+        if [ -f /usr/local/share/python/virtualenvwrapper.sh ]; then
+            source /usr/local/share/python/virtualenvwrapper.sh
+        fi
 	;;
     *)
-        source /usr/local/bin/virtualenvwrapper.sh
+        if [ -f /usr/local/bin/virtualenvwrapper.sh ]; then
+            source /usr/local/bin/virtualenvwrapper.sh
+        fi
 	;;
 esac
 
@@ -383,8 +387,10 @@ setopt auto_param_slash
 setopt auto_menu
 setopt auto_param_keys
 
-source ~/.nvm/nvm.sh
-nvm use default
+if [ -e ~/.nvm/nvm.sh ]; then
+    source ~/.nvm/nvm.sh
+    nvm use default
+fi
 
 ### Start emacs as a daemon if it is not started.
 if ! pgrep emacs >/dev/null 2>&1; then
