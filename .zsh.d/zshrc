@@ -368,18 +368,11 @@ RPROMPT='`rprompt-git-current-branch`'
 #####
 
 # ~/.tmux_defrost.sh &
-case $(uname) in
-    *BSD|Darwin)
-        if [ -f /usr/local/share/python/virtualenvwrapper.sh ]; then
-            source /usr/local/share/python/virtualenvwrapper.sh
-        fi
-	;;
-    *)
-        if [ -f /usr/local/bin/virtualenvwrapper.sh ]; then
-            source /usr/local/bin/virtualenvwrapper.sh
-        fi
-	;;
-esac
+if [ -f /usr/local/bin/virtualenvwrapper.sh ]; then
+    source /usr/local/bin/virtualenvwrapper.sh
+elif [ -f /usr/local/share/python/virtualenvwrapper.sh ]; then
+    source /usr/local/share/python/virtualenvwrapper.sh
+fi
 
 alias -s py=python
 
