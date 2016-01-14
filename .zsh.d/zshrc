@@ -380,7 +380,7 @@ setopt auto_param_slash
 setopt auto_menu
 setopt auto_param_keys
 
-export NVM_DIR="/home/mecab/.nvm"
+export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"  # This loads nvm
 
 ### Start emacs as a daemon if it is not started.
