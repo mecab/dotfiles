@@ -12,6 +12,7 @@ typeset -U path
 path=(# 自分用（--prefix=$HOME/localでインストールしたもの）
       $HOME/bin(N-/)
       $HOME/local/bin(N-/)
+      $HOME/.local/bin(N-/)
       /usr/local/bin(N-/)
       /usr/bin(N-/)
       # システム用
