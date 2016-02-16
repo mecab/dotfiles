@@ -3,17 +3,24 @@
 ## terminal configuration
 #
 unset LSCOLORS
+echo "TERM is ${TERM}"
 case "${TERM}" in
 xterm)
   export TERM=xterm-256color
   alias tmux="TERM=xterm-256color tmux"
+  source ~/.ls_colors.sh
   ;;
 xterm-256color)
-  export TERM=xterm-256color
   alias tmux="TERM=xterm-256color tmux"
+  source ~/.ls_colors.sh
+  ;;
+screen-256color)
+  alias tmux="TERM=xterm-256color tmux"
+  source ~/.ls_colors.sh
   ;;
 tmux)
   export TERM=xterm-256color
+  source ~/.ls_colors.sh
   ;;
 kterm)
   export TERM=kterm-color
@@ -36,8 +43,8 @@ kterm*|xterm*)
   precmd() {
     echo -ne "\033]0;${USER}@${HOST%%.*}:${PWD}\007"
   }
-  export LSCOLORS=exfxcxdxbxegedabagacad
-  export LS_COLORS='di=34:ln=35:so=32:pi=33:ex=31:bd=46;34:cd=43;34:su=41;30:sg=46;30:tw=42;30:ow=43;30'
+  # export LSCOLORS=exfxcxdxbxegedabagacad
+  # export LS_COLORS='di=34:ln=35:so=32:pi=33:ex=31:bd=46;34:cd=43;34:su=41;30:sg=46;30:tw=42;30:ow=43;30'
   zstyle ':completion:*' list-colors \
     'di=34' 'ln=35' 'so=32' 'ex=31' 'bd=46;34' 'cd=43;34'
   ;;
@@ -128,9 +135,25 @@ LGREEN="%{$fg_bold[green]%}"
 RESET="%{$reset_color%}"
 WHITE="%{$fg[white]%}"
 LWHITE="%{$fg_bold[white]%}"
+if [ `which gmd5sum` ]; then
+    md5=gmd5sum
+elif [ `which md5sum` ]; then
+    md5=md5sum
+elif [ `which md5 ` ]; then
+    md5=md5
+elif [ `which /sbin/md5` ]; then
+    md5=/sbin/md5
+fi
+
+if [ -z "${md5}" ]; then
+    HOSTCOLOR=${LGREEN}
+else
+    HOSTCOLOR=$'%{\e[38;5;'"$(printf "%d\n" 0x$(hostname|${md5}|cut -c1-2))"'m%}'
+fi
+
 
 # prompt_1="${LGREEN}%n@%m [%~]${RESET} %(1j,(%j,)"
-prompt_1="${LGREEN}[%n@%m${RESET} ${WHITE}%~${LGREEN}] ${RESET}${WHITE} %(1j,(%j,)${RESET}"
+prompt_1="${LGREEN}[%n@${HOSTCOLOR}%m${RESET} ${WHITE}%~${LGREEN}] ${RESET}${WHITE} %(1j,(%j,)${RESET}"
 
 ### 2行目左にでるプロンプト。
 ###   %h: ヒストリ数。
@@ -263,6 +286,9 @@ alias po="popd"
 case $(uname) in
     *BSD|Darwin)
 	alias ls="ls -G"
+        if [ `which gls` ]; then
+            alias ls="gls --color"
+        fi
 	;;
     *)
         alias ls="ls --color"
