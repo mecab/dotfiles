@@ -408,6 +408,7 @@ setopt auto_param_keys
 
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s $(brew --prefix nvm)/nvm.sh ] && source $(brew --prefix nvm)/nvm.sh # for nvm installed thru brew
 
 ### Start emacs as a daemon if it is not started.
 if ! pgrep emacs >/dev/null 2>&1; then
