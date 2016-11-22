@@ -1,5 +1,8 @@
 # -*- sh -*-
 
+# Do not use path_helper (/etc/profile)
+setopt no_global_rcs
+
 # パスの設定
 ## 重複したパスを登録しない。
 typeset -U path
@@ -33,7 +36,10 @@ path=(# 自分用（--prefix=$HOME/localでインストールしたもの）
       /usr/ccs/bin(N-/)
       # Cygwin用
       /cygdrive/c/meadow/bin(N-/)
-      /usr/games(N-/))
+      /usr/games(N-/)
+      # TeXLive2016
+      /usr/local/texlive/2016/bin/universal-darwin(N-/)
+)
 
 # sudo時のパスの設定
 ## -x: export SUDO_PATHも一緒に行う。
@@ -198,3 +204,10 @@ for email_file in ${email_files}; do
     export EMAIL=$(cat "$email_file")
     break
 done
+
+export LANG=ja_JP.UTF-8
+export LC_CTYPE=ja_JP.UTF-8
+# export LC_LANG=en.US_UTF-8
+
+
+export LESSCHARSET=utf-8

@@ -15,11 +15,11 @@ xterm-256color)
   source ~/.ls_colors.sh
   ;;
 screen-256color)
-  alias tmux="TERM=xterm-256color tmux"
+  alias tmux="TERM=screen-256color tmux"
   source ~/.ls_colors.sh
   ;;
 tmux)
-  export TERM=xterm-256color
+  export TERM=screen-256color
   source ~/.ls_colors.sh
   ;;
 kterm)
@@ -61,6 +61,7 @@ bindkey "^n" history-beginning-search-forward-end
 bindkey "\\ep" history-beginning-search-backward-end
 bindkey "\\en" history-beginning-search-forward-end
 
+setopt print_eight_bit
 
 # ディレクトリ移動
 ## ディレクトリ名だけでcdする。
