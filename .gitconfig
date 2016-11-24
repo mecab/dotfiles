@@ -2,7 +2,6 @@
 	pager = less -R
 	autocrlf = input
 	whitespace = cr-at-eol
-	excludesfile = /Users/masafumi.muta/.gitignore
 
 [user]
 	name = mecab
