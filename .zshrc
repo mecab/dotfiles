@@ -88,7 +88,6 @@ setopt share_history
 ## C-sでのヒストリ検索が潰されてしまうため、出力停止・開始用にC-s/C-qを使わない。
 setopt no_flow_control
 
-
 # プロンプト
 ## PROMPT内で変数展開・コマンド置換・算術演算を実行する。
 setopt prompt_subst
@@ -110,6 +109,13 @@ setopt auto_param_keys
 ### blue: 0-5
 color256()
 {
+    # To make fg256() and bg256() be convenient,
+    # when only one argument given, return it directly.
+    if [ "$#" -eq 1 ]; then
+        echo -n $1
+        return
+    fi
+
     local red=$1; shift
     local green=$2; shift
     local blue=$3; shift
@@ -129,27 +135,66 @@ bg256()
 
 GREEN="%{$fg[green]%}"
 LGREEN="%{$fg_bold[green]%}"
+RED="%{$fg_bold[red]%}"
+LRED="%{$fg_bold[red]%}"
 RESET="%{$reset_color%}"
 WHITE="%{$fg[white]%}"
 LWHITE="%{$fg_bold[white]%}"
-if [ `which gmd5sum` ]; then
-    local md5=gmd5sum
-elif [ `which md5sum` ]; then
-    local md5=md5sum
-elif [ `which md5 ` ]; then
-    local md5=md5
-elif [ `which /sbin/md5` ]; then
-    local md5=/sbin/md5
-fi
+USERCOLOR="%(!.${LRED}.${LGREEN})"
 
-if [ -z "${md5}" ]; then
-    HOSTCOLOR=${LGREEN}
-else
-    HOSTCOLOR=$'%{\e[38;5;'"$(printf "%d\n" 0x$(hostname|${md5}|cut -c1-2))"'m%}'
-fi
+hostcolor() {
+    local md5=$(
+        (which gmd5sum || \
+                which md5sum || \
+                which md5 || \
+                echo ""
+        ) | tail -n 1)
+
+    if [ -z "${md5}" ]; then
+        echo $USERCOLOR
+        return
+    fi
+
+    local bgval_hex=$(hostname|${md5}|cut -c1-2)
+    # `bgval` should be in range of 17-231
+    # as 0-15 represent system color and 232-255 is grayscale pallete.
+
+    # Restict range: 0-255 => 0-215.
+    # This value is used later to determine foreground color.
+    local bgval_clipped=$(printf "%d" "215*0x${bgval_hex}/255.0")
+
+    # Bias range: 0-216 => 16-231
+    local bgval=$(printf "%d" "${bgval_clipped}+16")
+
+    # (color code), (value in bgval_clipped) => (foreground color)
+    #
+    # 16-33 (0-17) => white
+    # 34-51 (18-35) => black
+    # 52-69 (36-53) => white
+    # ...
+    # 196-213 (180-197) => white
+    # 214-231 (198-215) => black
+    #
+    # Hence the foreground color can be represented as follows:
+    #
+    # ```
+    # is_fg_black = (bgval_clipped / 18) % 2 ? true : false
+    # ```
+    #
+    # See http://askubuntu.com/a/821163
+
+    local is_fg_black=$(printf "%d" "(${bgval_clipped}/18)%2")
+    if [ "${is_fg_black}" -eq 1 ]; then
+        local fgval=232 # system color INDEPENDENT white.
+    else
+        local fgval=255 # system color INDEPENDENT black.
+    fi
+
+    echo $(fg256 ${fgval})$(bg256 ${bgval})
+}
 
 # prompt_1="${LGREEN}%n@%m [%~]${RESET} %(1j,(%j,)"
-prompt_1="${LGREEN}[%n@${HOSTCOLOR}%m${RESET} ${WHITE}%~${LGREEN}] ${RESET}${WHITE} %(1j,(%j,)${RESET}"
+prompt_1="${USERCOLOR}[%n@`hostcolor`%m${RESET} ${WHITE}%~${USERCOLOR}] ${RESET}${WHITE} %(1j,(%j,)${RESET}"
 
 ### 2行目左にでるプロンプト。
 ###   %h: ヒストリ数。
@@ -157,7 +202,7 @@ prompt_1="${LGREEN}[%n@${HOSTCOLOR}%m${RESET} ${WHITE}%~${LGREEN}] ${RESET}${WHI
 ###     %j: 実行中のジョブ数。
 ###   %{%B%}...%{%b%}: 「...」を太字にする。
 ###   %#: 一般ユーザなら「%」、rootユーザなら「#」になる。
-prompt_2="[%h]%{%B%}%(!.♪ .♪ )%{%b%"
+prompt_2="[%h]%{%B%}%(!.💢  .💰  )%{%b%"
 PROMPT='${prompt_1}
 ${prompt_2} '
 
@@ -204,9 +249,10 @@ function rprompt-git-current-branch {
 RPROMPT='`rprompt-git-current-branch`'
 
 # 補完
-## 初期化
-autoload -U compinit
-compinit
+
+## compinit is prepared by zplug
+# autoload -U compinit
+# -compinit
 
 ## 補完方法毎にグループ化する。
 ### 補完方法の表示方法
@@ -325,10 +371,10 @@ alias df="df -h"
 
 alias su="su -l"
 
-if [ -f /usr/local/bin/virtualenvwrapper.sh ]; then
-    source /usr/local/bin/virtualenvwrapper.sh
-elif [ -f /usr/local/share/python/virtualenvwrapper.sh ]; then
-    source /usr/local/share/python/virtualenvwrapper.sh
+if [ -f /usr/local/bin/virtualenvwrapper_lazy.sh ]; then
+    source /usr/local/bin/virtualenvwrapper_lazy.sh
+elif [ -f /usr/local/share/python/virtualenvwrapper_lazy.sh ]; then
+    source /usr/local/share/python/virtualenvwrapper_lazy.sh
 fi
 
 alias -s py=python
@@ -349,9 +395,13 @@ alias e='emacs'
 alias kille="emacsclient -e '(kill-emacs)'"
 ###
 
-git config --global core.excludesfile $HOME/.gitignore
-
-# if which tmux 2>&1 >/dev/null; then
-    # if not inside a tmux session, run tmuxx
+if [ -z $SUDO_COMMAND ]; then
+    # if not in sudo, run tmuxx.
     test -z "$TMUX" && $HOME/.dotfiles/bin/tmuxx
-# fi
+fi
+
+# auto compilation of .zshrc
+if [ ! -f ~/.zshrc.zwc -o ~/.zshrc -nt ~/.zshrc.zwc ]; then
+    echo "Compiling .zshrc..."
+    zcompile ~/.zshrc &
+fi

@@ -10,7 +10,7 @@ function safe_lns () {
     fi
 
     if [ -f $target -o -s $target -o -d $target ]; then
-        echo "backup: $target > $target.bak"
+        echo "📦  backup: $target > $target.bak"
 
         # Avoid backing-up the $target "into" the target of the symlink $target.bak
         if [ -s $target.bak ]; then
@@ -20,16 +20,18 @@ function safe_lns () {
         mv $target $target.bak
     fi
 
-    echo "link: `pwd`/$1 -> $target"
+    echo "🔗  link: `pwd`/$1 -> $target"
     ln -sf `pwd`/$1 $target
 }
 export -f safe_lns # hack to use in xargs
 
 if [ -z $1 ]; then
-    dest=~
+    dest=${HOME}
 else
-    dest=$1
+    dest=`realpath $1`
 fi
+
+cd `dirname $0`
 
 find . -maxdepth 1 -type f -o -type d \
     | cut -c3- \

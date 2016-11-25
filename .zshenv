@@ -54,7 +54,7 @@ manpath=(
     /usr/local/share/man(N-/)
     /usr/share/man(N-/))
 
-export EDITOR=emacs
+export EDITOR="emacsclient -cnw"
 export PAGER=less
 
 # lvの設定
