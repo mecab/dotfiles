@@ -54,6 +54,11 @@ manpath=(
     /usr/local/share/man(N-/)
     /usr/share/man(N-/))
 
+# Append system paths for Mac
+if [ -x /usr/libexec/path_helper ]; then
+    eval `/usr/libexec/path_helper -s`
+fi
+
 export EDITOR="emacsclient -cnw"
 export PAGER=less
 
