@@ -42,3 +42,9 @@ find . -maxdepth 1 -type f -o -type d \
 
 mkdir -p $HOME/.config/git
 safe_lns .global_gitignore $HOME/.config/git/ignore
+
+echo "Install zplug? [y/N]"
+read -n1 ans
+if [ ${ans} = y ]  ; then
+    wget zplug.sh/installer -O - | zsh
+fi
