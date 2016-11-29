@@ -1,4 +1,5 @@
 source ~/.ls_colors.sh
+source ~/.dotfiles/etc/lib/color.sh
 source ~/.zplug/init.zsh
 
 # zplug "hchbaw/auto-fu.zsh", at:pu
@@ -103,36 +104,6 @@ setopt auto_param_slash
 setopt auto_menu
 setopt auto_param_keys
 
-## 256色生成用便利関数
-### red: 0-5
-### green: 0-5
-### blue: 0-5
-color256()
-{
-    # To make fg256() and bg256() be convenient,
-    # when only one argument given, return it directly.
-    if [ "$#" -eq 1 ]; then
-        echo -n $1
-        return
-    fi
-
-    local red=$1; shift
-    local green=$2; shift
-    local blue=$3; shift
-
-    echo -n $[$red * 36 + $green * 6 + $blue + 16]
-}
-
-fg256()
-{
-    echo -n $'\e[38;5;'$(color256 "$@")"m"
-}
-
-bg256()
-{
-    echo -n $'\e[48;5;'$(color256 "$@")"m"
-}
-
 GREEN="%{$fg[green]%}"
 LGREEN="%{$fg_bold[green]%}"
 RED="%{$fg_bold[red]%}"
@@ -141,57 +112,6 @@ RESET="%{$reset_color%}"
 WHITE="%{$fg[white]%}"
 LWHITE="%{$fg_bold[white]%}"
 USERCOLOR="%(!.${LRED}.${LGREEN})"
-
-hostcolor() {
-    local md5=$(
-        (which gmd5sum || \
-                which md5sum || \
-                which md5 || \
-                echo ""
-        ) | tail -n 1)
-
-    if [ -z "${md5}" ]; then
-        echo $USERCOLOR
-        return
-    fi
-
-    local bgval_hex=$(hostname|${md5}|cut -c1-2)
-    # `bgval` should be in range of 17-231
-    # as 0-15 represent system color and 232-255 is grayscale pallete.
-
-    # Restict range: 0-255 => 0-215.
-    # This value is used later to determine foreground color.
-    local bgval_clipped=$(printf "%d" "215*0x${bgval_hex}/255.0")
-
-    # Bias range: 0-216 => 16-231
-    local bgval=$(printf "%d" "${bgval_clipped}+16")
-
-    # (color code), (value in bgval_clipped) => (foreground color)
-    #
-    # 16-33 (0-17) => white
-    # 34-51 (18-35) => black
-    # 52-69 (36-53) => white
-    # ...
-    # 196-213 (180-197) => white
-    # 214-231 (198-215) => black
-    #
-    # Hence the foreground color can be represented as follows:
-    #
-    # ```
-    # is_fg_black = (bgval_clipped / 18) % 2 ? true : false
-    # ```
-    #
-    # See http://askubuntu.com/a/821163
-
-    local is_fg_black=$(printf "%d" "(${bgval_clipped}/18)%2")
-    if [ "${is_fg_black}" -eq 1 ]; then
-        local fgval=232 # system color INDEPENDENT white.
-    else
-        local fgval=255 # system color INDEPENDENT black.
-    fi
-
-    echo $(fg256 ${fgval})$(bg256 ${bgval})
-}
 
 # prompt_1="${LGREEN}%n@%m [%~]${RESET} %(1j,(%j,)"
 prompt_1="${USERCOLOR}[%n@`hostcolor`%m${RESET} ${WHITE}%~${USERCOLOR}] ${RESET}${WHITE} %(1j,(%j,)${RESET}"
