@@ -22,4 +22,6 @@
 
 [push]
 	default = simple
-        
+
+[include]
+        path = .gittoken
