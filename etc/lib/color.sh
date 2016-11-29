@@ -9,9 +9,9 @@ color256()
         return
     fi
 
-    local red=$1; #shift
-    local green=$2; #shift
-    local blue=$3; #shift
+    local red=$1;
+    local green=$2;
+    local blue=$3;
 
     echo -n $[$red * 36 + $green * 6 + $blue + 16]
 }
