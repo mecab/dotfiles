@@ -2,6 +2,17 @@
 
 color256()
 {
+    # Output the color code from given RGB value.
+    # If the sole argument given, return it directly.
+
+    # One arg usage:
+    #  - $1: color code [0-255]
+    #
+    # Three args usage:
+    #  - $1: red [0-5]
+    #  - $2: green [0-5]
+    #  - $3: blue [0-5]
+
     # To make fg256() and bg256() be convenient,
     # when only one argument given, return it directly.
     if [ "$#" -eq 1 ]; then
@@ -18,12 +29,34 @@ color256()
 
 fg256()
 {
-    echo -n $'\e[38;5;'$(color256 "$@")"m"
+    # Output the escape sequence to set the foreground color to given color code
+    # or the color code calculated by given RGB value.
+    #
+    # One arg usage:
+    #  - $1: color code [0-255]
+    #
+    # Three args usage:
+    #  - $1: red [0-5]
+    #  - $2: green [0-5]
+    #  - $3: blue [0-5]
+
+    echo -n "\e[38;5;"$(color256 "$@")"m"
 }
 
 bg256()
 {
-    echo -n $'\e[48;5;'$(color256 "$@")"m"
+    # Output the escape sequence to set the foreground color to given color code
+    # or the color code calculated by given RGB value.
+    #
+    # One arg usage:
+    #  - $1: color code [0-255]
+    #
+    # Three args usage:
+    #  - $1: red [0-5]
+    #  - $2: green [0-5]
+    #  - $3: blue [0-5]
+
+    echo -n "\e[48;5;"$(color256 "$@")"m"
 }
 
 hashed_color() {
