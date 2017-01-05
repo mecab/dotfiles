@@ -5,7 +5,7 @@ source ~/.zplug/init.zsh
 # zplug "hchbaw/auto-fu.zsh", at:pu
 zplug "stedolan/jq", from:gh-r, as:command, rename-to:jq, \
       on: "b4b4r07/emoji-cli"
-zplug "zsh-users/zsh-syntax-highlighting", nice:10
+zplug "zsh-users/zsh-syntax-highlighting", defer:3
 zplug "junegunn/fzf-bin", as:command, from:gh-r, rename-to:fzf
 # ついでに tmux 用の拡張も入れるといい
 zplug "junegunn/fzf", as:command, use:bin/fzf-tmux
@@ -299,9 +299,14 @@ fi
 
 alias -s py=python
 
-export NVM_DIR="$HOME/.nvm"
+if which brew > /dev/null; then
+    # for nvm installed thru brew
+    export NVM_DIR=$(brew --prefix nvm)/nvm.sh
+else
+    export NVM_DIR="$HOME/.nvm"
+fi
 [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"  # This loads nvm
-[ -s $(brew --prefix nvm)/nvm.sh ] && source $(brew --prefix nvm)/nvm.sh # for nvm installed thru brew
+
 
 ### Start emacs as a daemon if it is not started.
 if ! pgrep -i emacs >/dev/null 2>&1; then
