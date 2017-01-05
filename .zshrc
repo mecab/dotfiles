@@ -299,14 +299,15 @@ fi
 
 alias -s py=python
 
-if which brew > /dev/null; then
-    # for nvm installed thru brew
-    export NVM_DIR=$(brew --prefix nvm)/nvm.sh
-else
-    export NVM_DIR="$HOME/.nvm"
+export NVM_DIR="$HOME/.nvm"
+if [ -s "$NVM_DIR/nvm.sh" ]; then
+    . "$NVM_DIR/nvm.sh"  # This loads nvm
+elif which brew > /dev/null; then
+    # if brew found, try to use nvm installed via brew.
+    [ -s "$(brew --prefix nvm)/nvm.sh" ] &&
+        . "$(brew --prefix nvm)/nvm.sh" &&
+        export NVM_DIR="$(brew --prefix nvm)" # if it success, replace NVM_DIR
 fi
-[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"  # This loads nvm
-
 
 ### Start emacs as a daemon if it is not started.
 if ! pgrep -i emacs >/dev/null 2>&1; then
