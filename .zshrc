@@ -112,6 +112,8 @@ RESET="%{$reset_color%}"
 WHITE="%{$fg[white]%}"
 LWHITE="%{$fg_bold[white]%}"
 USERCOLOR="%(!.${LRED}.${LGREEN})"
+EMOJI_ANGRY=$'%{\U1F4A2%}'
+EMOJI_MONEYBAG=$'%{\U1F4B0%}'
 
 # prompt_1="${LGREEN}%n@%m [%~]${RESET} %(1j,(%j,)"
 prompt_1="${USERCOLOR}[%n@`hostcolor`%m${RESET} ${WHITE}%~${USERCOLOR}] ${RESET}${WHITE} %(1j,(%j,)${RESET}"
@@ -122,7 +124,7 @@ prompt_1="${USERCOLOR}[%n@`hostcolor`%m${RESET} ${WHITE}%~${USERCOLOR}] ${RESET}
 ###     %j: 実行中のジョブ数。
 ###   %{%B%}...%{%b%}: 「...」を太字にする。
 ###   %#: 一般ユーザなら「%」、rootユーザなら「#」になる。
-prompt_2="[%h]%{%B%}%(!.💢  .💰  )%{%b%"
+prompt_2="[%h]%{%B%}%(!.${EMOJI_ANGRY}  .${EMOJI_MONEYBAG}  )%{%b%"
 PROMPT='${prompt_1}
 ${prompt_2} '
 
