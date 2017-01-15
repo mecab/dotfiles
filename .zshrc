@@ -319,7 +319,7 @@ if ! pgrep -i emacs >/dev/null 2>&1; then
 fi
 
 alias emacs="emacsclient -cnw"
-alias e='emacs'
+alias e="emacs"
 alias kille="emacsclient -e '(kill-emacs)'"
 ###
 
