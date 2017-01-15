@@ -14,6 +14,7 @@ path=(
     $HOME/bin(N-/)
     $HOME/local/bin(N-/)
     $HOME/.local/bin(N-/)
+    $HOME/.dotfiles/bin(N-/)
     /usr/local/bin(N-/)
     /usr/bin(N-/)
     /bin(N-/)

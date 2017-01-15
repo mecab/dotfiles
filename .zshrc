@@ -325,7 +325,7 @@ alias kille="emacsclient -e '(kill-emacs)'"
 
 if [ -z $SUDO_COMMAND ]; then
     # if not in sudo, run tmuxx.
-    test -z "$TMUX" && $HOME/.dotfiles/bin/tmuxx
+    test -z "$TMUX" && tmuxx
 fi
 
 # auto compilation of .zshrc
