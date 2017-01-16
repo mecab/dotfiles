@@ -1,6 +1,14 @@
 tmux|tmux terminal multiplexer,
     ritm=\E[23m, rmso=\E[27m, sitm=\E[3m, smso=\E[7m, Ms@, ncv@,
-        use=xterm+tmux, use=screen,
+# As of Nov'11, the below keys are picked up by
+# .../tmux/blob/master/trunk/xterm-keys.c:
+    kDC=\E[3;2~, kEND=\E[1;2F, kHOM=\E[1;2H,
+    kIC=\E[2;2~, kLFT=\E[1;2D, kNXT=\E[6;2~, kPRV=\E[5;2~,
+    kRIT=\E[1;2C,
+    use=xterm+tmux, use=screen,
 
 tmux-256color|tmux with 256 colors,
     use=xterm+256setaf, use=tmux,
+
+xterm-tmux-256color|just an alias of tmux-256color,
+    use=tmux-256color,
