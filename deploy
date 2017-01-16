@@ -43,6 +43,12 @@ find . -maxdepth 1 -type f -o -type d \
 mkdir -p $HOME/.config/git
 safe_lns .global_gitignore $HOME/.config/git/ignore
 
+echo "Compile terminfo? [y/N]"
+read -n1 ans
+if [ ${ans} = y ]; then
+    ls etc/terminfo/*.terminfo | xargs -I@ sh -c "echo Compiling @...; tic -x @"
+fi
+
 echo "Install zplug? [y/N]"
 read -n1 ans
 if [ ${ans} = y ]; then
