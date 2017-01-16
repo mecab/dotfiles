@@ -101,3 +101,6 @@ esac
 export LANG=ja_JP.UTF-8
 export LC_CTYPE=ja_JP.UTF-8
 # export LC_LANG=en.US_UTF-8
+
+# Load machine-local configuration
+[ -f ~/.zshenv.local ] && source ~/.zshenv.local
