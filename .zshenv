@@ -90,7 +90,7 @@ case $(uname) in
     *BSD|Darwin)
         alias ls="ls -G"
         if [ `which gls` ]; then
-            alias ls="gls --color"
+            alias ls="gls --color=auto"
         fi
         ;;
     *)
