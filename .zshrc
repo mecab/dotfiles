@@ -1,3 +1,9 @@
+# If runnning on Bash on Windows, suppress the error related to nice(5)
+# See: https://github.com/Microsoft/BashOnWindows/issues/1887
+if [[ $(uname -r) =~ Microsoft$ ]]; then
+    unsetopt BG_NICE
+fi
+
 source ~/.ls_colors.sh
 source ~/.dotfiles/etc/lib/color.sh
 source ~/.zplug/init.zsh
