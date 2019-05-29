@@ -23,6 +23,9 @@ path=(
     # TeXLive2016
     /usr/local/texlive/2016/bin/universal-darwin(N-/)
 )
+if [ -f $HOME/google-cloud-sdk/path.zsh.inc ]; then
+    source $HOME/google-cloud-sdk/path.zsh.inc
+fi
 
 # sudo時のパスの設定
 ## -x: export SUDO_PATHも一緒に行う。
@@ -60,7 +63,7 @@ if [ -x /usr/libexec/path_helper ]; then
     eval `/usr/libexec/path_helper -s`
 fi
 
-export EDITOR="emacsclient -cnw"
+export EDITOR="emacsclient -c"
 export PAGER=less
 
 # lvの設定

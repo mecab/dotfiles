@@ -130,7 +130,7 @@ prompt_1="${USERCOLOR}[%n@`hostcolor`%m${RESET} ${WHITE}%~${USERCOLOR}] ${RESET}
 ###     %j: 実行中のジョブ数。
 ###   %{%B%}...%{%b%}: 「...」を太字にする。
 ###   %#: 一般ユーザなら「%」、rootユーザなら「#」になる。
-prompt_2="[%h]%{%B%}%(!.${EMOJI_ANGRY}  .${EMOJI_MONEYBAG}  )%{%b%}"
+prompt_2="[%h]%{%B%}%(!.%1{${EMOJI_ANGRY}%}  .%1{${EMOJI_MONEYBAG}%}  )%{%b%}"
 PROMPT='${prompt_1}
 ${prompt_2}'
 
@@ -177,6 +177,8 @@ function rprompt-git-current-branch {
 RPROMPT='`rprompt-git-current-branch`'
 
 # 補完
+
+fpath=(~/.dotfiles/zsh_completion $fpath)
 
 ## compinit is prepared by zplug
 # autoload -U compinit
@@ -313,9 +315,13 @@ if [ -s "$NVM_DIR/nvm.sh" ]; then
 elif which brew > /dev/null; then
     # if brew found, try to use nvm installed via brew.
     [ -s "$(brew --prefix nvm)/nvm.sh" ] &&
-        . "$(brew --prefix nvm)/nvm.sh" &&
-        export NVM_DIR="$(brew --prefix nvm)" # if it success, replace NVM_DIR
+        . "$(brew --prefix nvm)/nvm.sh"
 fi
+if which nvm > /dev/null 2>&1; then
+    [ -f $HOME/.zshrc.nvm.patch ] && source $HOME/.zshrc.nvm.patch
+fi
+
+alias nvm='() { unsetopt mark_dirs; nvm $@; setopt mark_dirs; }'
 
 ### Start emacs as a daemon if it is not started.
 if ! pgrep -i emacs >/dev/null 2>&1; then
@@ -324,14 +330,75 @@ if ! pgrep -i emacs >/dev/null 2>&1; then
     \emacs --daemon 2> /dev/null &
 fi
 
-alias emacs="emacsclient -cnw"
+alias emacs="emacsclient -c"
 alias e="emacs"
 alias kille="emacsclient -e '(kill-emacs)'"
+
+alias kg='kubectl get'
+alias kgp='kubectl get pods -o wide'
+alias kgpw='watch kubectl get pods -o wide'
+alias ka='kubectl apply'
+alias kd='kubectl describe'
+alias kdel='kubectl delete'
+alias kc='kubectl config current-context'
+alias kcu='kubectl config use-context'
+alias kcc='kubectl config current-context'
+alias kp='kubectl proxy'
+alias kl='kubectl logs'
+alias ke='kubectl exec -it'
+alias kgan='kubectl get all --all-namespaces'
+alias kga='kubectl get all'
+alias kgi='kubectl get pods -o jsonpath="{..containers..image}" | tr -s "[[:space:]]" "\n" | sort | uniq'
 ###
+
+### utils
+alias randomstr='(){ cat /dev/urandom | LC_CTYPE=C tr -dc "0-9a-zA-Z" | fold -w $1 | head -n 1 }'
+alias colorize_rbl="colorecho -w -p '/- debug: /,gray' -p '/- info: /,cyan' -p '/- error: /,red' -p '/\[hostName=.*?\]/,blue' -p '/\[serviceName=.*?\]/,green' -p '/\[correlationId=.*?\]/,yellow' -p '/\[clientId=.*?\]/,magenta'"
+
+dzf() {
+    service=$(docker-compose config --services | ~/.zplug/bin/fzf)
+    docker-compose $(echo $@ | sed -E "s/@/${service}/")
+}
+
+# kezf() {
+#     pod=$(kubectl get pods -oname | sed -E 's/pod\///g' | fzf)
+#     kubectl exec -it $(echo $@ | sed -E "s/@/${service}/")
+# }
+
+###
+
+if [ -f $HOME/google-cloud-sdk/completion.zsh.inc ]; then
+    source $HOME/google-cloud-sdk/completion.zsh.inc
+fi
+
+alias kg='kubectl get'
+alias kgp='kubectl get pods -o wide'
+alias kgpw='watch kubectl get pods -o wide'
+alias ka='kubectl apply'
+alias kd='kubectl describe'
+alias kdel='kubectl delete'
+alias kc='kubectl config current-context'
+alias kcu='kubectl config use-context'
+alias kcc='kubectl config current-context'
+alias kp='kubectl proxy'
+alias kl='kubectl logs'
+alias ke='kubectl exec -it'
+alias kgan='kubectl get all --all-namespaces'
+alias kga='kubectl get all'
+alias kgi='kubectl get pods -o jsonpath="{..containers..image}" | tr -s "[[:space:]]" "\n" | sort | uniq'
+alias ktx='kubectl config use-context $(kubectl config get-contexts | tail -n +2 | sed -E "s/ +/ /g" | cut -d" " -f2 | fzf --height=50% --border)'
+alias kezf='(){ kubectl exec -it $(kubectl get pods -oname | sed -E "s/pod\///g" | fzf) $@ }'
+
+alias -g K='$(kubectl get pods -oname | sed -E "s/pod\///g" | fzf --height=50% --header=pods)'
+alias -g B='$(git branch -a --no-color --format="%(refname:short)" | fzf --height=50% --header=branches)'
 
 if [ -z $SUDO_COMMAND ]; then
     # if not in sudo, run tmuxx.
     test -z "$TMUX" && tmuxx
+fi
+
+if [ -f "$HOME/.zshrc.local.inc" ]; then
+    source "$HOME/zsh.local.inc"
 fi
 
 # auto compilation of .zshrc

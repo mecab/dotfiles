@@ -170,3 +170,9 @@ pip-log.txt
 .\#*
 *_flymake.*
 .tern-port
+TAGS
+_region_.*
+*.synctex.gz
+
+### vscode ###
+.vscode
