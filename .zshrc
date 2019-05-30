@@ -157,13 +157,13 @@ function rprompt-git-current-branch {
 
     st=`git status 2> /dev/null`
     if [[ "$st" =~ "(?m)^nothing to" ]]; then
-        color=$LGREEN
+        color=%F{blue}
     elif [[ "$st" =~ "(?m)^nothing added" ]]; then
         color=%F{yellow}
     elif [[ "$st" =~ "(?m)^# Untracked" ]]; then
-        color=%B%F{red}
+        color=%B%F{magenta}
     else
-        color=%F{red}
+        color=%F{magenta}
     fi
 
     res="$color$name$action%f%b"
