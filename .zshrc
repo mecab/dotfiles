@@ -130,7 +130,7 @@ prompt_1="${USERCOLOR}[%n@`hostcolor`%m${RESET} ${WHITE}%~${USERCOLOR}] ${RESET}
 ###     %j: 実行中のジョブ数。
 ###   %{%B%}...%{%b%}: 「...」を太字にする。
 ###   %#: 一般ユーザなら「%」、rootユーザなら「#」になる。
-prompt_2="[%h]%{%B%}%(!.%1{${EMOJI_ANGRY}%}  .%1{${EMOJI_MONEYBAG}%}  )%{%b%}"
+prompt_2="[%h]%{%B%}%(!.${EMOJI_ANGRY}%  .${EMOJI_MONEYBAG}%  )%{%b%}"
 PROMPT='${prompt_1}
 ${prompt_2}'
 
@@ -330,8 +330,8 @@ if ! pgrep -i emacs >/dev/null 2>&1; then
     \emacs --daemon 2> /dev/null &
 fi
 
-alias emacs="emacsclient -c"
-alias e="emacs"
+alias emacs="emacsclient -nw"
+alias e="emacsclient -nw"
 alias kille="emacsclient -e '(kill-emacs)'"
 
 alias kg='kubectl get'
