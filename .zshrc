@@ -130,7 +130,7 @@ prompt_1="${USERCOLOR}[%n@`hostcolor`%m${RESET} ${WHITE}%~${USERCOLOR}] ${RESET}
 ###     %j: 実行中のジョブ数。
 ###   %{%B%}...%{%b%}: 「...」を太字にする。
 ###   %#: 一般ユーザなら「%」、rootユーザなら「#」になる。
-prompt_2="[%h]%{%B%}%(!.${EMOJI_ANGRY}%  .${EMOJI_MONEYBAG}%  )%{%b%}"
+prompt_2="[%h]%{%B%}%(!.%2{${EMOJI_ANGRY}%} .%2{${EMOJI_MONEYBAG}%} )%{%b%}"
 PROMPT='${prompt_1}
 ${prompt_2}'
 
@@ -309,6 +309,10 @@ fi
 
 alias -s py=python
 
+# Unalias hacky nvm alias once before activating nvm, or it might stuck loading.
+unalias nvm > /dev/null 2>&1
+unsetopt mark_dirs
+
 export NVM_DIR="$HOME/.nvm"
 if [ -s "$NVM_DIR/nvm.sh" ]; then
     . "$NVM_DIR/nvm.sh"  # This loads nvm
@@ -321,6 +325,8 @@ if which nvm > /dev/null 2>&1; then
     [ -f $HOME/.zshrc.nvm.patch ] && source $HOME/.zshrc.nvm.patch
 fi
 
+setopt mark_dirs
+# Fix double-slash in PATH causing keep unloading activated runtime.
 alias nvm='() { unsetopt mark_dirs; nvm $@; setopt mark_dirs; }'
 
 ### Start emacs as a daemon if it is not started.
@@ -392,7 +398,7 @@ alias kezf='(){ kubectl exec -it $(kubectl get pods -oname | sed -E "s/pod\///g"
 alias -g K='$(kubectl get pods -oname | sed -E "s/pod\///g" | fzf --height=50% --header=pods)'
 alias -g B='$(git branch -a --no-color --format="%(refname:short)" | fzf --height=50% --header=branches)'
 
-if [ -z $SUDO_COMMAND ]; then
+if [ -z $SUDO_COMMAND ] && [ "$NO_AUTOSTART_TMUX" -ne 1 ]; then
     # if not in sudo, run tmuxx.
     test -z "$TMUX" && tmuxx
 fi
