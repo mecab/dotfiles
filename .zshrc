@@ -9,15 +9,15 @@ source ~/.dotfiles/etc/lib/color.sh
 source ~/.zplug/init.zsh
 
 # zplug "hchbaw/auto-fu.zsh", at:pu
-zplug "stedolan/jq", from:gh-r, as:command, rename-to:jq, \
-      on: "b4b4r07/emoji-cli"
+# zplug "stedolan/jq", from:gh-r, as:command, rename-to:jq, \
+#       on: "b4b4r07/emoji-cli"
 zplug "zsh-users/zsh-syntax-highlighting", defer:3
 zplug "junegunn/fzf-bin", as:command, from:gh-r, rename-to:fzf
 # ついでに tmux 用の拡張も入れるといい
 zplug "b4b4r07/enhancd", use:init.sh
 zplug "mrowa44/emojify", as:command
 zplug "zsh-users/zsh-history-substring-search", hook-build:"__zsh_version 4.3"
-zplug "greymd/ttcopy"
+# zplug "greymd/ttcopy"
 
 # Install plugins if there are plugins that have not been installed
 if ! zplug check --verbose; then

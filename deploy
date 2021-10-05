@@ -49,6 +49,13 @@ if [ ${ans} = y ]; then
     ls etc/terminfo/*.terminfo | xargs -I@ sh -c "echo Compiling @...; tic -x @"
 fi
 
+echo "Install Tmux Plugin Manager? (need git installed) [y/N]"
+read -n1 ans
+if [ ${ans} = y ]; then
+    git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+    ls etc/terminfo/*.terminfo | xargs -I@ sh -c "echo Compiling @...; tic -x @"
+fi
+
 echo "Install zplug? [y/N]"
 read -n1 ans
 if [ ${ans} = y ]; then
