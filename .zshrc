@@ -309,6 +309,8 @@ fi
 
 alias -s py=python
 
+alias ssh="TERM=xterm-256color ssh"
+
 # Unalias hacky nvm alias once before activating nvm, or it might stuck loading.
 unalias nvm > /dev/null 2>&1
 unsetopt mark_dirs
@@ -377,26 +379,45 @@ if [ -f $HOME/google-cloud-sdk/completion.zsh.inc ]; then
     source $HOME/google-cloud-sdk/completion.zsh.inc
 fi
 
-alias kg='kubectl get'
-alias kgp='kubectl get pods -o wide'
-alias kgpw='watch kubectl get pods -o wide'
-alias ka='kubectl apply'
-alias kd='kubectl describe'
-alias kdel='kubectl delete'
-alias kc='kubectl config current-context'
-alias kcu='kubectl config use-context'
-alias kcc='kubectl config current-context'
-alias kp='kubectl proxy'
-alias kl='kubectl logs'
-alias ke='kubectl exec -it'
-alias kgan='kubectl get all --all-namespaces'
-alias kga='kubectl get all'
-alias kgi='kubectl get pods -o jsonpath="{..containers..image}" | tr -s "[[:space:]]" "\n" | sort | uniq'
-alias ktx='kubectl config use-context $(kubectl config get-contexts | tail -n +2 | sed -E "s/ +/ /g" | cut -d" " -f2 | fzf --height=50% --border)'
-alias kezf='(){ kubectl exec -it $(kubectl get pods -oname | sed -E "s/pod\///g" | fzf) $@ }'
+if type kubectl >/dev/null 2>&1; then
+    alias kg='kubectl get'
+    alias kgp='kubectl get pods -o wide'
+    alias kgpw='watch kubectl get pods -o wide'
+    alias ka='kubectl apply'
+    alias kd='kubectl describe'
+    alias kdel='kubectl delete'
+    alias kc='kubectl config current-context'
+    alias kcu='kubectl config use-context'
+    alias kcc='kubectl config current-context'
+    alias kp='kubectl proxy'
+    alias kl='kubectl logs'
+    alias ke='kubectl exec -it'
+    alias kgan='kubectl get all --all-namespaces'
+    alias kga='kubectl get all'
+    alias kgi='kubectl get pods -o jsonpath="{..containers..image}" | tr -s "[[:space:]]" "\n" | sort | uniq'
+    alias ktx='kubectl config use-context $(kubectl config get-contexts -o name | fzf --height=50% --border)'
+    alias kezf='(){ kubectl exec -it $(kubectl get pods -oname | sed -E "s/pod\///g" | fzf) $@ }'
 
-alias -g K='$(kubectl get pods -oname | sed -E "s/pod\///g" | fzf --height=50% --header=pods)'
-alias -g B='$(git branch -a --no-color --format="%(refname:short)" | fzf --height=50% --header=branches)'
+    alias -g K='$(kubectl get pods -oname | sed -E "s/pod\///g" | fzf --height=50% --header=pods)'
+    alias -g B='$(git branch -a --no-color --format="%(refname:short)" | fzf --height=50% --header=branches)'
+
+    # fzf
+    function list_k8s_contexts {
+        LBUFFER="${LBUFFER}$(kubectl config get-contexts -o name | fzf --height=50% --border)";
+        zle reset-prompt;
+    }
+    zle -N list_k8s_contexts
+    bindkey '^xkc' list_k8s_contexts
+
+    function list_k8s_pods {
+        LBUFFER="${LBUFFER}$(kubectl get pods -o name | sed -E "s/pod\///g" | fzf --height=50% --border)";
+        zle reset-prompt;
+    }
+    zle -N list_k8s_pods
+    bindkey '^xkp' list_k8s_pods
+
+    source <(kubectl completion zsh)
+fi
 
 if [ -z $SUDO_COMMAND ] && [ "$NO_AUTOSTART_TMUX" -ne 1 ]; then
     # if not in sudo, run tmuxx.
@@ -404,11 +425,14 @@ if [ -z $SUDO_COMMAND ] && [ "$NO_AUTOSTART_TMUX" -ne 1 ]; then
 fi
 
 if [ -f "$HOME/.zshrc.local.inc" ]; then
-    source "$HOME/zsh.local.inc"
+    source "$HOME/.zshrc.local.inc"
 fi
 
 # auto compilation of .zshrc
 if [ ! -f ~/.zshrc.zwc -o ~/.zshrc -nt ~/.zshrc.zwc ]; then
-    echo "Compiling .zshrc..."
-    zcompile ~/.zshrc &
+    echo "Compiling .zshrc..." &
+    zcompile ~/.zshrc
 fi
+
+# Enable job controll (just in case it is disabled accidentally)
+set -m
