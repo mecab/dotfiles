@@ -342,23 +342,6 @@ alias emacs="emacsclient -nw"
 alias e="emacsclient -nw"
 alias kille="emacsclient -e '(kill-emacs)'"
 
-alias kg='kubectl get'
-alias kgp='kubectl get pods -o wide'
-alias kgpw='watch kubectl get pods -o wide'
-alias ka='kubectl apply'
-alias kd='kubectl describe'
-alias kdel='kubectl delete'
-alias kc='kubectl config current-context'
-alias kcu='kubectl config use-context'
-alias kcc='kubectl config current-context'
-alias kp='kubectl proxy'
-alias kl='kubectl logs'
-alias ke='kubectl exec -it'
-alias kgan='kubectl get all --all-namespaces'
-alias kga='kubectl get all'
-alias kgi='kubectl get pods -o jsonpath="{..containers..image}" | tr -s "[[:space:]]" "\n" | sort | uniq'
-###
-
 ### utils
 alias randomstr='(){ cat /dev/urandom | LC_CTYPE=C tr -dc "0-9a-zA-Z" | fold -w $1 | head -n 1 }'
 alias colorize_rbl="colorecho -w -p '/- debug: /,gray' -p '/- info: /,cyan' -p '/- error: /,red' -p '/\[hostName=.*?\]/,blue' -p '/\[serviceName=.*?\]/,green' -p '/\[correlationId=.*?\]/,yellow' -p '/\[clientId=.*?\]/,magenta'"
