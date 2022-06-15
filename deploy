@@ -53,15 +53,12 @@ echo "Install Tmux Plugin Manager? (need git installed) [y/N]"
 read -n1 ans
 if [ ${ans} = y ]; then
     git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
-    ls etc/terminfo/*.terminfo | xargs -I@ sh -c "echo Compiling @...; tic -x @"
 fi
 
-echo "Install zplug? [y/N]"
+echo "Install fzf and zsh-history-substring-search? (need homebrew) [y/N]"
 read -n1 ans
 if [ ${ans} = y ]; then
-    if which curl > /dev/null; then
-        curl -sL --proto-redir -all,https https://raw.githubusercontent.com/zplug/installer/master/installer.zsh | zsh
-    else
-        wget https://raw.githubusercontent.com/zplug/installer/master/installer.zsh -O - | zsh
-    fi
+    brew install fzf zsh-history-substring-search
+
+    $(brew --prefix)/opt/fzf/instal
 fi

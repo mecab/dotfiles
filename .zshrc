@@ -6,27 +6,15 @@ fi
 
 source ~/.ls_colors.sh
 source ~/.dotfiles/etc/lib/color.sh
-source ~/.zplug/init.zsh
 
-# zplug "hchbaw/auto-fu.zsh", at:pu
-# zplug "stedolan/jq", from:gh-r, as:command, rename-to:jq, \
-#       on: "b4b4r07/emoji-cli"
-zplug "zsh-users/zsh-syntax-highlighting", defer:3
-zplug "junegunn/fzf-bin", as:command, from:gh-r, rename-to:fzf
-# ついでに tmux 用の拡張も入れるといい
-zplug "b4b4r07/enhancd", use:init.sh
-zplug "mrowa44/emojify", as:command
-zplug "zsh-users/zsh-history-substring-search", hook-build:"__zsh_version 4.3"
-# zplug "greymd/ttcopy"
-
-# Install plugins if there are plugins that have not been installed
-if ! zplug check --verbose; then
-    printf "Install? [y/N]: "
-    if read -q; then
-        echo; zplug install
-    fi
+if [[ -f /usr/local/share/zsh-history-substring-search/zsh-history-substring-search.zsh ]]; then
+ source /usr/local/share/zsh-history-substring-search/zsh-history-substring-search.zsh
 fi
-zplug load
+
+# fzf は常に fzf-tmux を使う（fzf は他のエイリアスからも使われるのでエイリアスではなく関数として定義）
+fzf () {
+    fzf-tmux
+}
 
 # ウィンドウタイトル
 ## 実行中のコマンドとユーザ名とホスト名とカレントディレクトリを表示。
@@ -181,8 +169,8 @@ RPROMPT='`rprompt-git-current-branch`'
 fpath=(~/.dotfiles/zsh_completion $fpath)
 
 ## compinit is prepared by zplug
-# autoload -U compinit
-# -compinit
+autoload -U compinit
+compinit
 
 ## 補完方法毎にグループ化する。
 ### 補完方法の表示方法
@@ -347,7 +335,7 @@ alias randomstr='(){ cat /dev/urandom | LC_CTYPE=C tr -dc "0-9a-zA-Z" | fold -w 
 alias colorize_rbl="colorecho -w -p '/- debug: /,gray' -p '/- info: /,cyan' -p '/- error: /,red' -p '/\[hostName=.*?\]/,blue' -p '/\[serviceName=.*?\]/,green' -p '/\[correlationId=.*?\]/,yellow' -p '/\[clientId=.*?\]/,magenta'"
 
 dzf() {
-    service=$(docker-compose config --services | ~/.zplug/bin/fzf)
+    service=$(docker-compose config --services | fzf)
     docker-compose $(echo $@ | sed -E "s/@/${service}/")
 }
 
@@ -411,11 +399,13 @@ if [ -f "$HOME/.zshrc.local.inc" ]; then
     source "$HOME/.zshrc.local.inc"
 fi
 
-# auto compilation of .zshrc
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
+# Enable job controll (just in case it is disabled accidentally)
+setopt monitor
+
+auto compilation of .zshrc
 if [ ! -f ~/.zshrc.zwc -o ~/.zshrc -nt ~/.zshrc.zwc ]; then
     echo "Compiling .zshrc..." &
     zcompile ~/.zshrc
 fi
-
-# Enable job controll (just in case it is disabled accidentally)
-set -m
