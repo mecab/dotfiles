@@ -404,7 +404,7 @@ fi
 # Enable job controll (just in case it is disabled accidentally)
 setopt monitor
 
-auto compilation of .zshrc
+# auto compilation of .zshrc
 if [ ! -f ~/.zshrc.zwc -o ~/.zshrc -nt ~/.zshrc.zwc ]; then
     echo "Compiling .zshrc..." &
     zcompile ~/.zshrc
