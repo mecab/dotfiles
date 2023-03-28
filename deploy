@@ -60,5 +60,5 @@ read -n1 ans
 if [ ${ans} = y ]; then
     brew install fzf zsh-history-substring-search
 
-    $(brew --prefix)/opt/fzf/instal
+    $(brew --prefix)/opt/fzf/install
 fi
