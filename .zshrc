@@ -13,7 +13,7 @@ fi
 
 # fzf は常に fzf-tmux を使う（fzf は他のエイリアスからも使われるのでエイリアスではなく関数として定義）
 fzf () {
-    fzf-tmux
+    fzf-tmux $@
 }
 
 # ウィンドウタイトル
@@ -255,49 +255,13 @@ WORDCHARS=${WORDCHARS:s,/,,}
 ## 2011-09-19
 WORDCHARS="${WORDCHARS}|"
 
-# alias
-
 setopt complete_aliases
-
-## ページャーを使いやすくする。
-### grep -r def *.rb L -> grep -r def *.rb |& lv
-alias -g L="|& ${PAGER}"
-## grepを使いやすくする。
-alias -g G='| grep'
-## 後はおまけ。
-alias -g H='| head'
-alias -g T='| tail'
-alias -g S='| sed'
-
-## 完全に削除。
-alias rr="command rm -rf"
-## ファイル操作を確認する。
-alias rm="rm -i"
-alias cp="cp -i"
-alias mv="mv -i"
-
-## pushd/popdのショートカット。
-alias pd="pushd"
-alias po="popd"
-
-alias la="ls -a"
-alias lf="ls -F"
-alias ll="ls -all"
-
-alias du="du -h"
-alias df="df -h"
-
-alias su="su -l"
 
 if [ -f /usr/local/bin/virtualenvwrapper_lazy.sh ]; then
     source /usr/local/bin/virtualenvwrapper_lazy.sh
 elif [ -f /usr/local/share/python/virtualenvwrapper_lazy.sh ]; then
     source /usr/local/share/python/virtualenvwrapper_lazy.sh
 fi
-
-alias -s py=python
-
-alias ssh="TERM=xterm-256color ssh"
 
 # Unalias hacky nvm alias once before activating nvm, or it might stuck loading.
 unalias nvm > /dev/null 2>&1
@@ -326,14 +290,6 @@ if ! pgrep -i emacs >/dev/null 2>&1; then
     \emacs --daemon 2> /dev/null &
 fi
 
-alias emacs="emacsclient -nw"
-alias e="emacsclient -nw"
-alias kille="emacsclient -e '(kill-emacs)'"
-
-### utils
-alias randomstr='(){ cat /dev/urandom | LC_CTYPE=C tr -dc "0-9a-zA-Z" | fold -w $1 | head -n 1 }'
-alias colorize_rbl="colorecho -w -p '/- debug: /,gray' -p '/- info: /,cyan' -p '/- error: /,red' -p '/\[hostName=.*?\]/,blue' -p '/\[serviceName=.*?\]/,green' -p '/\[correlationId=.*?\]/,yellow' -p '/\[clientId=.*?\]/,magenta'"
-
 dzf() {
     service=$(docker-compose config --services | fzf)
     docker-compose $(echo $@ | sed -E "s/@/${service}/")
@@ -351,37 +307,16 @@ if [ -f $HOME/google-cloud-sdk/completion.zsh.inc ]; then
 fi
 
 if type kubectl >/dev/null 2>&1; then
-    alias kg='kubectl get'
-    alias kgp='kubectl get pods -o wide'
-    alias kgpw='watch kubectl get pods -o wide'
-    alias ka='kubectl apply'
-    alias kd='kubectl describe'
-    alias kdel='kubectl delete'
-    alias kc='kubectl config current-context'
-    alias kcu='kubectl config use-context'
-    alias kcc='kubectl config current-context'
-    alias kp='kubectl proxy'
-    alias kl='kubectl logs'
-    alias ke='kubectl exec -it'
-    alias kgan='kubectl get all --all-namespaces'
-    alias kga='kubectl get all'
-    alias kgi='kubectl get pods -o jsonpath="{..containers..image}" | tr -s "[[:space:]]" "\n" | sort | uniq'
-    alias ktx='kubectl config use-context $(kubectl config get-contexts -o name | fzf --height=50% --border)'
-    alias kezf='(){ kubectl exec -it $(kubectl get pods -oname | sed -E "s/pod\///g" | fzf) $@ }'
-
-    alias -g K='$(kubectl get pods -oname | sed -E "s/pod\///g" | fzf --height=50% --header=pods)'
-    alias -g B='$(git branch -a --no-color --format="%(refname:short)" | fzf --height=50% --header=branches)'
-
     # fzf
     function list_k8s_contexts {
-        LBUFFER="${LBUFFER}$(kubectl config get-contexts -o name | fzf --height=50% --border)";
+        LBUFFER="${LBUFFER}$(kubectl config get-contexts -o name | fzf --height=50%)";
         zle reset-prompt;
     }
     zle -N list_k8s_contexts
     bindkey '^xkc' list_k8s_contexts
 
     function list_k8s_pods {
-        LBUFFER="${LBUFFER}$(kubectl get pods -o name | sed -E "s/pod\///g" | fzf --height=50% --border)";
+        LBUFFER="${LBUFFER}$(kubectl get pods -o name | sed -E "s/pod\///g" | fzf --height=50%)";
         zle reset-prompt;
     }
     zle -N list_k8s_pods
@@ -400,6 +335,8 @@ if [ -f "$HOME/.zshrc.local.inc" ]; then
 fi
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
+source ~/.dotfiles/alias.zsh
 
 # Enable job controll (just in case it is disabled accidentally)
 setopt monitor
