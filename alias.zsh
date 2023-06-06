@@ -64,5 +64,5 @@ fi
 ### utils
 alias randomstr='(){ cat /dev/urandom | LC_CTYPE=C tr -dc "0-9a-zA-Z" | fold -w $1 | head -n 1 }'
 alias colorize_rbl="colorecho -w -p '/- debug: /,gray' -p '/- info: /,cyan' -p '/- error: /,red' -p '/\[hostName=.*?\]/,blue' -p '/\[serviceName=.*?\]/,green' -p '/\[correlationId=.*?\]/,yellow' -p '/\[clientId=.*?\]/,magenta'"
-alias branch_from_issue="git checkout -b \$(jira issue list -q'project IS NOT EMPTY' -s Open -a `jira me` --plain --no-headers --columns key,summary | fzf --height=50% | perl -pE 's/[ \t]/-/g;' -pE 's/[^a-zA-Z0-9 _-]//g;' -pE 's/[-]+/-/g;' -pE 's/^(.+?)-([0-9]+)-(.+)/\$1-\$2-\L\$3/g');"
+alias branch_from_issue="git checkout -b \$(jira issue list -q'project IS NOT EMPTY and status IN (OPEN, \"IN PROGRESS\")' -a `jira me` --plain --no-headers --columns key,summary | fzf --height=50% | perl -pE 's/[ \t]/-/g;' -pE 's/[^a-zA-Z0-9 _-]//g;' -pE 's/[-]+/-/g;' -pE 's/^(.+?)-([0-9]+)-(.+)/\$1-\$2-\L\$3/g');"
 alias hl='(){ egrep --color "$|.*$1.*" }'
