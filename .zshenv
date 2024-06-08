@@ -17,6 +17,7 @@ path=(
     $HOME/local/bin(N-/)
     $HOME/.local/bin(N-/)
     $HOME/.dotfiles/bin(N-/)
+    $HOME/.fzf/bin(N-/)
     $BUN_INSTALL/bin(N-/)
     /usr/local/bin(N-/)
     /usr/bin(N-/)

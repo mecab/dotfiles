@@ -17,7 +17,7 @@ source ~/.dotfiles/lib/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 source ~/.dotfiles/lib/fzf-tab/fzf-tab.plugin.zsh
 source ~/.dotfiles/lib/zsh-autosuggestions/zsh-autosuggestions.zsh
 source ~/.dotfiles/lib/manai/manai.zsh
-# source <(fzf --zsh)
+source <(fzf --zsh)
 
 # fzf は常に fzf-tmux を使う（fzf は他のエイリアスからも使われるのでエイリアスではなく関数として定義）
 fzf () {
