@@ -71,4 +71,4 @@ alias branch_from_issue="git checkout -b \$(jira issue list -q'project IS NOT EM
 alias hl='(){ egrep --color "$|.*$1.*" }'
 
 ### github copilot
-hash gh && eval "$(gh copilot alias -- zsh)"
+type gh >/dev/null 2>&1 && eval "$(gh copilot alias -- zsh)"

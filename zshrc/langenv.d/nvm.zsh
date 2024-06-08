@@ -11,8 +11,6 @@ elif which brew > /dev/null; then
         . "$(brew --prefix nvm)/nvm.sh"
 fi
 
-. "$(brew --prefix nvm)/nvm.sh"
-
 setopt mark_dirs
 # Fix double-slash in PATH causing keep unloading activated runtime.
 alias nvm='() { unsetopt mark_dirs; nvm $@; setopt mark_dirs; }'

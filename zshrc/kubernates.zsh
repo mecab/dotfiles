@@ -1,4 +1,4 @@
-if hash kubectl 2>&1; then
+if type kubectl >/dev/null 2>&1; then
     # fzf
     function list_k8s_contexts {
         LBUFFER="${LBUFFER}$(kubectl config get-contexts -o name | fzf --height=50%)";

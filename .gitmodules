@@ -13,3 +13,7 @@
 [submodule "lib/manai"]
 	path = lib/manai
 	url = https://github.com/mecab/manai
+[submodule "lib/fzf"]
+	path = lib/fzf
+	url = https://github.com/junegunn/fzf.git
+
