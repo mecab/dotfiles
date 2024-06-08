@@ -4,17 +4,39 @@ if [[ $(uname -r) =~ Microsoft$ ]]; then
     unsetopt BG_NICE
 fi
 
-source ~/.ls_colors.sh
-source ~/.dotfiles/etc/lib/color.sh
-
-if [[ -f /usr/local/share/zsh-history-substring-search/zsh-history-substring-search.zsh ]]; then
- source /usr/local/share/zsh-history-substring-search/zsh-history-substring-search.zsh
+if [ -z $SUDO_COMMAND ] && [ "$NO_AUTOSTART_TMUX" -ne 1 ]; then
+    # if not in sudo, run tmuxx.
+    test -z "$TMUX" && tmuxx
 fi
+
+source ~/.ls_colors.sh
+source ~/.dotfiles/lib/color.sh
+
+source ~/.dotfiles/lib/zsh-history-substring-search/zsh-history-substring-search.zsh
+source ~/.dotfiles/lib/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+source ~/.dotfiles/lib/fzf-tab/fzf-tab.plugin.zsh
+source ~/.dotfiles/lib/zsh-autosuggestions/zsh-autosuggestions.zsh
+source ~/.dotfiles/lib/manai/manai.zsh
+source <(fzf --zsh)
 
 # fzf は常に fzf-tmux を使う（fzf は他のエイリアスからも使われるのでエイリアスではなく関数として定義）
 fzf () {
-    fzf-tmux $@
+    if [ -n "$TMUX" ]; then
+        fzf-tmux $@
+    else
+        command fzf $@
+    fi
 }
+
+# Unset vars to prevent them from being appended to multiple times if bash
+# shells are nested and as a result .bashrc is sourced multiple times
+unset FZF_ALT_C_OPTS FZF_CTRL_R_OPTS FZF_DEFAULT_OPTS
+
+# View full path in preview window (?)
+export FZF_ALT_C_OPTS="${FZF_ALT_C_OPTS:+$FZF_ALT_C_OPTS }--preview 'echo {}' --preview-window down:5:hidden:wrap --bind '?:toggle-preview'"
+
+# View full command in preview window (?)
+export FZF_CTRL_R_OPTS="${FZF_CTRL_R_OPTS:+$FZF_CTRL_R_OPTS }--preview 'echo {}' --preview-window down:5:hidden:wrap --bind '?:toggle-preview'"
 
 # ウィンドウタイトル
 ## 実行中のコマンドとユーザ名とホスト名とカレントディレクトリを表示。
@@ -33,9 +55,9 @@ update_title() {
     print -n -P " %n@%m:%~\a"
 }
 ## X環境上でだけウィンドウタイトルを変える。
-if [ -n "$DISPLAY" -a -z "$INSIDE_EMACS" ]; then
+# if [ -n "$DISPLAY" -a -z "$INSIDE_EMACS" ]; then
     preexec_functions=($preexec_functions update_title)
-fi
+# fi
 
 ## Emacsキーバインドを使う。
 bindkey -e
@@ -48,6 +70,7 @@ bindkey -M emacs '^P' history-substring-search-up
 bindkey -M emacs '^N' history-substring-search-down
 # bindkey "\\ep" history-beginning-search-backward-end
 # bindkey "\\en" history-beginning-search-forward-end
+bindkey '\eh' manai
 
 setopt print_eight_bit
 
@@ -91,101 +114,39 @@ setopt prompt_percent
 ## コピペしやすいようにコマンド実行後は右プロンプトを消す。
 setopt transient_rprompt
 
-autoload -Uz colors
-colors
-
 setopt auto_param_slash
 setopt auto_menu
 setopt auto_param_keys
 
-GREEN="%{$fg[green]%}"
-LGREEN="%{$fg_bold[green]%}"
-RED="%{$fg_bold[red]%}"
-LRED="%{$fg_bold[red]%}"
-RESET="%{$reset_color%}"
-WHITE="%{$fg[white]%}"
-LWHITE="%{$fg_bold[white]%}"
-USERCOLOR="%(!.${LRED}.${LGREEN})"
-EMOJI_ANGRY=$'\U1F4A2'
-EMOJI_MONEYBAG=$'\U1F4B0'
-
-# prompt_1="${LGREEN}%n@%m [%~]${RESET} %(1j,(%j,)"
-prompt_1="${USERCOLOR}[%n@`hostcolor`%m${RESET} ${WHITE}%~${USERCOLOR}] ${RESET}${WHITE} %(1j,(%j,)${RESET}"
-
-### 2行目左にでるプロンプト。
-###   %h: ヒストリ数。
-###   %(1j,(%j),): 実行中のジョブ数が1つ以上ある場合だけ「(%j)」を表示。
-###     %j: 実行中のジョブ数。
-###   %{%B%}...%{%b%}: 「...」を太字にする。
-###   %#: 一般ユーザなら「%」、rootユーザなら「#」になる。
-prompt_2="[%h]%{%B%}%(!.%2{${EMOJI_ANGRY}%} .%2{${EMOJI_MONEYBAG}%} )%{%b%}"
-PROMPT='${prompt_1}
-${prompt_2}'
-
-## Show branch name in Zsh's right prompt
-
-autoload -Uz VCS_INFO_get_data_git; VCS_INFO_get_data_git 2> /dev/null
-setopt prompt_subst
-setopt re_match_pcre
-
-function rprompt-git-current-branch {
-    local name st color gitdir action
-    if [[ "$PWD" =~ '/\.git(/.*)?$' ]]; then
-        return
-    fi
-
-    name=`git rev-parse --abbrev-ref=loose HEAD 2> /dev/null`
-
-    if [[ -z $name ]]; then
-        return
-    fi
-
-    gitdir=`git rev-parse --git-dir 2> /dev/null`
-    action=`VCS_INFO_git_getaction "$gitdir"` && action="($action)"
-
-    st=`git status 2> /dev/null`
-    if [[ "$st" =~ "(?m)^nothing to" ]]; then
-        color=%F{blue}
-    elif [[ "$st" =~ "(?m)^nothing added" ]]; then
-        color=%F{yellow}
-    elif [[ "$st" =~ "(?m)^# Untracked" ]]; then
-        color=%B%F{magenta}
-    else
-        color=%F{magenta}
-    fi
-
-    res="$color$name$action%f%b"
-    if [ -n "$res" ]; then
-        echo "[$res]"
-    else
-        echo ""
-    fi
-}
-
-RPROMPT='`rprompt-git-current-branch`'
-
 # 補完
-
 fpath=(~/.dotfiles/zsh_completion $fpath)
-
-## compinit is prepared by zplug
-autoload -U compinit
-compinit
+autoload -U compinit && compinit -i
 
 ## 補完方法毎にグループ化する。
 ### 補完方法の表示方法
 ###   %B...%b: 「...」を太字にする。
 ###   %d: 補完方法のラベル
-zstyle ':completion:*' format '%B%d%b'
-zstyle ':completion:*' group-name ''
+# zstyle ':completion:*' format '%B%d%b'
+# zstyle ':completion:*' group-name ''
+
+# set descriptions format to enable group support
+# NOTE: don't use escape sequences here, fzf-tab will ignore them
+zstyle ':completion:*:descriptions' format '[%d]'
+# set list-colors to enable filename colorizing
+zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
+# force zsh not to show completion menu, which allows fzf-tab to capture the unambiguous prefix
+zstyle ':completion:*' menu no
+# switch group using `<` and `>`
+zstyle ':fzf-tab:*' switch-group '<' '>'
 
 ## 補完侯補をメニューから選択する。
 ### select=2: 補完候補を一覧から選択する。
 ###           ただし、補完候補が2つ以上なければすぐに補完する。
-zstyle ':completion:*:default' menu select=2
+# zstyle ':completion:*:default' menu select=2
 
 ## 補完候補に色を付ける。
 ### "": 空文字列はデフォルト値を使うという意味。
+zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
 zstyle ':completion:*:default' list-colors ""
 
 ## 補完候補がなければより曖昧に候補を探す。
@@ -257,32 +218,6 @@ WORDCHARS="${WORDCHARS}|"
 
 setopt complete_aliases
 
-if [ -f /usr/local/bin/virtualenvwrapper_lazy.sh ]; then
-    source /usr/local/bin/virtualenvwrapper_lazy.sh
-elif [ -f /usr/local/share/python/virtualenvwrapper_lazy.sh ]; then
-    source /usr/local/share/python/virtualenvwrapper_lazy.sh
-fi
-
-# Unalias hacky nvm alias once before activating nvm, or it might stuck loading.
-unalias nvm > /dev/null 2>&1
-unsetopt mark_dirs
-
-export NVM_DIR="$HOME/.nvm"
-if [ -s "$NVM_DIR/nvm.sh" ]; then
-    . "$NVM_DIR/nvm.sh"  # This loads nvm
-elif which brew > /dev/null; then
-    # if brew found, try to use nvm installed via brew.
-    [ -s "$(brew --prefix nvm)/nvm.sh" ] &&
-        . "$(brew --prefix nvm)/nvm.sh"
-fi
-if which nvm > /dev/null 2>&1; then
-    [ -f $HOME/.zshrc.nvm.patch ] && source $HOME/.zshrc.nvm.patch
-fi
-
-setopt mark_dirs
-# Fix double-slash in PATH causing keep unloading activated runtime.
-alias nvm='() { unsetopt mark_dirs; nvm $@; setopt mark_dirs; }'
-
 ### Start emacs as a daemon if it is not started.
 if ! pgrep -i emacs >/dev/null 2>&1; then
     echo Starting Emacs daemon in background ...
@@ -295,48 +230,19 @@ dzf() {
     docker-compose $(echo $@ | sed -E "s/@/${service}/")
 }
 
-# kezf() {
-#     pod=$(kubectl get pods -oname | sed -E 's/pod\///g' | fzf)
-#     kubectl exec -it $(echo $@ | sed -E "s/@/${service}/")
-# }
-
-###
-
 if [ -f $HOME/google-cloud-sdk/completion.zsh.inc ]; then
     source $HOME/google-cloud-sdk/completion.zsh.inc
 fi
 
-if type kubectl >/dev/null 2>&1; then
-    # fzf
-    function list_k8s_contexts {
-        LBUFFER="${LBUFFER}$(kubectl config get-contexts -o name | fzf --height=50%)";
-        zle reset-prompt;
-    }
-    zle -N list_k8s_contexts
-    bindkey '^xkc' list_k8s_contexts
+test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh" || true
 
-    function list_k8s_pods {
-        LBUFFER="${LBUFFER}$(kubectl get pods -o name | sed -E "s/pod\///g" | fzf --height=50%)";
-        zle reset-prompt;
-    }
-    zle -N list_k8s_pods
-    bindkey '^xkp' list_k8s_pods
-
-    source <(kubectl completion zsh)
-fi
-
-if [ -z $SUDO_COMMAND ] && [ "$NO_AUTOSTART_TMUX" -ne 1 ]; then
-    # if not in sudo, run tmuxx.
-    test -z "$TMUX" && tmuxx
-fi
-
+source ~/.dotfiles/alias.zsh
+for file in ~/.dotfiles/zshrc/*.zsh; do
+    source "$file"
+done
 if [ -f "$HOME/.zshrc.local.inc" ]; then
     source "$HOME/.zshrc.local.inc"
 fi
-
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-
-source ~/.dotfiles/alias.zsh
 
 # Enable job controll (just in case it is disabled accidentally)
 setopt monitor

@@ -1,6 +1,8 @@
 # Do not use path_helper (/etc/profile)
 setopt no_global_rcs
 
+export BUN_INSTALL="$HOME/.bun"
+
 # パスの設定
 ## 重複したパスを登録しない。
 typeset -U path
@@ -15,6 +17,7 @@ path=(
     $HOME/local/bin(N-/)
     $HOME/.local/bin(N-/)
     $HOME/.dotfiles/bin(N-/)
+    $BUN_INSTALL/bin(N-/)
     /usr/local/bin(N-/)
     /usr/bin(N-/)
     /bin(N-/)
@@ -104,6 +107,12 @@ esac
 export LANG=ja_JP.UTF-8
 export LC_CTYPE=ja_JP.UTF-8
 # export LC_LANG=en.US_UTF-8
+
+
+if [ -f /opt/homebrew/bin/brew ]; then
+    eval "$(/opt/homebrew/bin/brew shellenv)"
+fi
+
 
 # Load machine-local configuration
 [ -f ~/.zshenv.local ] && source ~/.zshenv.local

@@ -33,6 +33,8 @@ fi
 
 cd `dirname $0`
 
+git submodule update --init
+
 find . -maxdepth 1 -type f -o -type d \
     | cut -c3- \
     | grep "^\..*[^~]$" \
@@ -53,12 +55,4 @@ echo "Install Tmux Plugin Manager? (need git installed) [y/N]"
 read -n1 ans
 if [ ${ans} = y ]; then
     git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
-fi
-
-echo "Install fzf and zsh-history-substring-search? (need homebrew) [y/N]"
-read -n1 ans
-if [ ${ans} = y ]; then
-    brew install fzf zsh-history-substring-search
-
-    $(brew --prefix)/opt/fzf/install
 fi

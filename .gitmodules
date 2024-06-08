@@ -1,0 +1,15 @@
+[submodule "lib/zsh-history-substring-search"]
+	path = lib/zsh-history-substring-search
+	url = git@github.com:zsh-users/zsh-history-substring-search.git
+[submodule "lib/zsh-syntax-highlighting"]
+	path = lib/zsh-syntax-highlighting
+	url = git@github.com:zsh-users/zsh-syntax-highlighting.git
+[submodule "lib/fzf-tab"]
+	path = lib/fzf-tab
+	url = git@github.com:Aloxaf/fzf-tab.git
+[submodule "lib/zsh-autosuggestions"]
+	path = lib/zsh-autosuggestions
+	url = https://github.com/zsh-users/zsh-autosuggestions
+[submodule "lib/manai"]
+	path = lib/manai
+	url = https://github.com/mecab/manai
