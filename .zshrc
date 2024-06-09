@@ -130,14 +130,6 @@ setopt share_history
 ## C-sでのヒストリ検索が潰されてしまうため、出力停止・開始用にC-s/C-qを使わない。
 setopt no_flow_control
 
-# プロンプト
-## PROMPT内で変数展開・コマンド置換・算術演算を実行する。
-setopt prompt_subst
-## PROMPT内で「%」文字から始まる置換機能を有効にする。
-setopt prompt_percent
-## コピペしやすいようにコマンド実行後は右プロンプトを消す。
-setopt transient_rprompt
-
 setopt auto_param_slash
 setopt auto_menu
 setopt auto_param_keys

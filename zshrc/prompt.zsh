@@ -1,3 +1,11 @@
+# プロンプト
+## PROMPT内で変数展開・コマンド置換・算術演算を実行する。
+setopt prompt_subst
+## PROMPT内で「%」文字から始まる置換機能を有効にする。
+setopt prompt_percent
+## コピペしやすいようにコマンド実行後は右プロンプトを消す。
+setopt transient_rprompt
+
 autoload -Uz colors
 colors
 

@@ -4,7 +4,7 @@ unsetopt mark_dirs
 
 export NVM_DIR="$HOME/.nvm"
 if [ -s "$NVM_DIR/nvm.sh" ]; then
-    . "$NVM_DIR/nvm.sh"  # This loads nvm
+    \. "$NVM_DIR/nvm.sh"  # This loads nvm
 elif which brew > /dev/null; then
     # if brew found, try to use nvm installed via brew.
     [ -s "$(brew --prefix nvm)/nvm.sh" ] &&
