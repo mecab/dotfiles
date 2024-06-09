@@ -26,6 +26,7 @@ path=(
     /opt/local/bin(N-/)
     # TeXLive2016
     /usr/local/texlive/2016/bin/universal-darwin(N-/)
+    $path
 )
 if [ -f $HOME/google-cloud-sdk/path.zsh.inc ]; then
     source $HOME/google-cloud-sdk/path.zsh.inc

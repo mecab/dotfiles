@@ -40,7 +40,7 @@ export FZF_CTRL_R_OPTS="${FZF_CTRL_R_OPTS:+$FZF_CTRL_R_OPTS }--preview 'echo {}'
 
 # ウィンドウタイトル
 ## 実行中のコマンドとユーザ名とホスト名とカレントディレクトリを表示。
-update_title() {
+update_title_pre() {
     local command_line=
     typeset -a command_line
     command_line=${(z)2}
@@ -50,13 +50,37 @@ update_title() {
     else
         command="$2"
     fi
+
+    if [[ ${#command} -gt 32 ]]; then
+        command="${command[1,32]}..."
+    fi
+
     print -n -P "\e]2;"
-    echo -n "(${command})"
-    print -n -P " %n@%m:%~\a"
+    echo -n "🌀 ${command} ("
+    print -rnD "$PWD)"
+    print -n -P "\a"
+}
+
+update_title_post() {
+    last_status="$?"
+    command="$history[$((HISTCMD-1))]"
+    if [[ ${#command} -gt 32 ]]; then
+        command="${command[1,32]}..."
+    fi
+    print -n -P "\e]2;"
+    if [[ "$last_status" == 0 ]]; then
+        echo -n "✅ "
+    else
+        echo -n "✖  "
+    fi
+    echo -n "${command} ("
+    print -rnD "$PWD)"
+    print -n -P "\a"
 }
 ## X環境上でだけウィンドウタイトルを変える。
 # if [ -n "$DISPLAY" -a -z "$INSIDE_EMACS" ]; then
-    preexec_functions=($preexec_functions update_title)
+    preexec_functions=($preexec_functions update_title_pre)
+    precmd_functions=($precmd_functions update_title_post)
 # fi
 
 ## Emacsキーバインドを使う。
